@@ -4,7 +4,7 @@ import { ContractCard } from "@/components/ContractCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { mockContracts } from "@/data/mockContracts";
+import { useContracts } from "@/contexts/ContractContext";
 import { Search, Filter, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,8 +12,9 @@ export const ContractList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const navigate = useNavigate();
+  const { contracts } = useContracts();
 
-  const filteredContracts = mockContracts.filter(contract => {
+  const filteredContracts = contracts.filter(contract => {
     const matchesSearch = contract.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contract.parties.some(party => party.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
@@ -22,11 +23,11 @@ export const ContractList = () => {
   });
 
   const statusCounts = {
-    all: mockContracts.length,
-    completed: mockContracts.filter(c => c.status === "completed").length,
-    processing: mockContracts.filter(c => c.status === "processing").length,
-    pending: mockContracts.filter(c => c.status === "pending").length,
-    error: mockContracts.filter(c => c.status === "error").length,
+    all: contracts.length,
+    completed: contracts.filter(c => c.status === "completed").length,
+    processing: contracts.filter(c => c.status === "processing").length,
+    pending: contracts.filter(c => c.status === "pending").length,
+    error: contracts.filter(c => c.status === "error").length,
   };
 
   return (

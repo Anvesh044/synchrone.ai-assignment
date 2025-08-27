@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Layout } from "@/components/Layout";
 import { ProgressBar } from "@/components/ProgressBar";
+import { useContracts } from "@/contexts/ContractContext";
+import { Contract } from "@/data/mockContracts";
 import { Upload, FileText, X, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface UploadedFile {
   file: File;
@@ -17,6 +20,7 @@ interface UploadedFile {
 export const UploadPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [dragOver, setDragOver] = useState(false);
+  const { addContract } = useContracts();
 
   const simulateProcessing = useCallback((fileIndex: number) => {
     const updateProgress = (progress: number) => {
@@ -49,6 +53,38 @@ export const UploadPage = () => {
                 : f
             )
           );
+          
+          // Add the completed contract to the contracts list
+          const file = uploadedFiles[fileIndex]?.file;
+          if (file) {
+            const newContract: Contract = {
+              id: Date.now().toString(),
+              title: file.name.replace('.pdf', ''),
+              parties: ["Your Company", "Contract Party"],
+              status: "completed",
+              confidenceScore: 95,
+              uploadDate: new Date().toISOString().split('T')[0],
+              financialValue: "$" + (Math.floor(Math.random() * 900000) + 100000).toLocaleString(),
+              extractedData: {
+                contractType: "Service Agreement",
+                startDate: new Date().toISOString().split('T')[0],
+                endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                paymentTerms: "Net 30 days",
+                slaDetails: "Standard service level agreement",
+                keyObligations: [
+                  "Provide agreed services",
+                  "Maintain quality standards",
+                  "Meet delivery timelines"
+                ],
+                riskFactors: [
+                  "Payment terms",
+                  "Service level requirements"
+                ]
+              }
+            };
+            addContract(newContract);
+            toast.success("Contract processed and added to your list!");
+          }
         }, 1000);
       }
       updateProgress(Math.min(progress, 100));

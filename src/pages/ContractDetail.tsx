@@ -4,7 +4,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockContracts } from "@/data/mockContracts";
+import { useContracts } from "@/contexts/ContractContext";
 import { 
   ArrowLeft, 
   FileText, 
@@ -20,7 +20,8 @@ import { cn } from "@/lib/utils";
 
 export const ContractDetail = () => {
   const { id } = useParams();
-  const contract = mockContracts.find(c => c.id === id);
+  const { contracts } = useContracts();
+  const contract = contracts.find(c => c.id === id);
 
   if (!contract) {
     return (
